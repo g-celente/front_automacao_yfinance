@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <style>
+    .primary { fill: #f8fafc; }
+    .secondary { fill: #e2e8f0; }
+    .accent { fill: #94a3b8; }
+  </style>
+  <g transform="translate(100,50)">
+    <rect class="primary" x="50" y="100" width="500" height="300" rx="20"/>
+    <rect class="secondary" x="100" y="150" width="200" height="30" rx="5"/>
+    <rect class="secondary" x="100" y="200" width="300" height="30" rx="5"/>
+    <rect class="accent" x="100" y="300" width="150" height="50" rx="10"/>
+    <circle class="accent" cx="500" cy="150" r="30"/>
+    <path class="secondary" d="M450,250 Q500,200 550,250 T650,250" fill="none" stroke="#e2e8f0" stroke-width="4"/>
+  </g>
+</svg>
