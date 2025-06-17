@@ -1,21 +1,24 @@
 <template>
-  <aside :class="[
+  <aside :class=" [
     'fixed top-0 left-0 z-40 h-screen transition-all duration-300 ease-in-out',
-    props.isCollapsed ? 'w-20' : 'w-64',
-    props.isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+    isCollapsed ? 'w-20' : 'w-64',
+    isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
   ]" class="bg-white border-r border-gray-100 shadow-lg">
     
     <!-- Header da Sidebar -->
-    <div class="flex items-center justify-between p-4 h-16 border-b border-gray-100 bg-white">
+    <div class="flex items-center justify-between p-4 h-16 border-b border-gray-100 bg-gradient-to-r from-indigo-600 to-purple-600">
       <router-link to="/" class="flex items-center">
-        <span v-show="!props.isCollapsed" class="ml-3 text-lg font-bold transition-opacity duration-200 text-black">
+        <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-md">
+          <span class="text-indigo-600 font-bold text-lg">S</span>
+        </div>
+        <span v-show="!isCollapsed" class="ml-3 text-lg font-bold text-white transition-opacity duration-200">
           Stock Manager
         </span>
       </router-link>
       <Button 
         @click="toggleCollapse" 
         icon="pi pi-bars"
-        class="lg:flex bg-white hover:bg-gray-100 border-none p-2 text-black rounded-lg transition-all duration-200 shadow-sm hover:shadow-md" 
+        class="lg:flex bg-white/20 hover:bg-white/30 border-none p-2 text-white rounded-lg transition-all duration-200 shadow-sm hover:shadow-md" 
       />
     </div>
 
@@ -27,8 +30,8 @@
             :to="item.to" 
             v-if="!item.requiresAdmin || (item.requiresAdmin && isAdmin)"
             class="group flex items-center px-3 py-3 text-sm font-medium rounded-xl transition-all duration-200 relative"
-            :class="[
-              { 'justify-center': props.isCollapsed },
+            :class=" [
+              { 'justify-center': isCollapsed },
               $route.path === item.to 
                 ? 'bg-indigo-50 text-indigo-700 border-l-4 border-indigo-500 shadow-sm' 
                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
@@ -36,7 +39,7 @@
           >
             <!-- Ícone -->
             <div class="flex items-center justify-center w-6 h-6">
-              <i :class="[
+              <i :class=" [
                 'pi',
                 item.icon,
                 'text-lg transition-all duration-200',
@@ -48,8 +51,8 @@
             
             <!-- Label -->
             <span 
-              v-show="!props.isCollapsed" 
-              :class="[
+              v-show="!isCollapsed" 
+              :class=" [
                 'ml-3 transition-all duration-200',
                 $route.path === item.to 
                   ? 'text-indigo-700 font-semibold' 
@@ -61,7 +64,7 @@
             
             <!-- Indicador ativo -->
             <div 
-              v-if="$route.path === item.to && !props.isCollapsed"
+              v-if="$route.path === item.to && !isCollapsed"
               class="absolute right-3 w-2 h-2 bg-indigo-500 rounded-full animate-pulse"
             ></div>
           </router-link>
@@ -72,7 +75,7 @@
       <div class="my-6 border-t border-gray-200"></div>
       
       <!-- User Section -->
-      <div v-if="!props.isCollapsed" class="px-3 py-4 bg-gray-50 rounded-xl">
+      <div v-if="!isCollapsed" class="px-3 py-4 bg-gray-50 rounded-xl">
         <div class="flex items-center">
           <div class="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
             <span class="text-white text-sm font-medium">A</span>
@@ -89,15 +92,15 @@
     <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-100 bg-white">
       <Button 
         @click="handleLogout" 
-        :icon="props.isCollapsed ? 'pi pi-sign-out' : ''"
-        :label="props.isCollapsed ? undefined : 'Sair'"
+        :icon="isCollapsed ? 'pi pi-sign-out' : ''"
+        :label="isCollapsed ? undefined : 'Sair'"
         class="w-full justify-center text-gray-600 hover:text-red-600 hover:bg-red-50 transition-all duration-200 border-none bg-transparent"
       />
     </div>
   </aside>
 
   <!-- Overlay para mobile -->
-  <div v-if="props.isMobileOpen" 
+  <div v-if="isMobileOpen" 
     class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm lg:hidden z-30 transition-opacity duration-300"
     @click="emit('update:isMobileOpen', false)"
   ></div>
@@ -127,6 +130,8 @@ const emit = defineEmits(['update:isMobileOpen', 'update:isCollapsed']);
 const router = useRouter();
 
 const isAdmin = computed(() => localStorage.getItem('user-role') === 'admin');
+
+console.log(isAdmin.value)
 
 const toggleCollapse = () => {
   emit('update:isCollapsed', !props.isCollapsed);

@@ -24,8 +24,7 @@ export const useAuthStore = defineStore("auth", () => {
   }
   async function userLogout() {
     try {
-      const response = await api.auth.userLogout();
-
+      const response = await api.auth.logout();
       return response.data;
     } catch (error) {}
   }
@@ -41,5 +40,6 @@ export const useAuthStore = defineStore("auth", () => {
   return {
     userLogin,
     registerUser,
+    userLogout,
   };
 });

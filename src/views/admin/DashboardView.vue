@@ -64,7 +64,7 @@
       </div>
 
       <!-- Gráfico -->
-      <div class="bg-white rounded-xl border border-gray-100 p-6 shadow-sm">
+      <div class="bg-white rounded-xl border border-gray-100 p-6 shadow-sm w-full">
         <h3 class="text-lg font-semibold text-gray-900 mb-4">
           Histórico de Preços - {{ searchQuery || 'Ativo' }}
         </h3>
