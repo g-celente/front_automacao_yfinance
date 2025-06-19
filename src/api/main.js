@@ -1,9 +1,12 @@
 import axios from "axios";
 import AuthService from "./services/auth";
+import AssetService from "./services/asset";
 
 const baseURL ="http://127.0.0.1:5000/api"; // Use your actual API base URL here
 
 const httpClient = axios.create({ baseURL });
+
+httpClient.defaults.headers["Content-Type"] = "application/json";
 
 let isRefreshing = false;
 let subscribers = [];
@@ -70,4 +73,5 @@ httpClient.interceptors.response.use(
 
 export default {
   auth: AuthService(httpClient),
+  asset: AssetService(httpClient)
 };

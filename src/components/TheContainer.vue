@@ -78,4 +78,19 @@ const isCollapsed = ref(false);
 .page-leave-to {
   opacity: 0;
 }
+
+.loading {
+  height: 400px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @media (max-width: 630px) {
+    .loading-icon > svg {
+      width: 100px;
+      height: 100px;
+    }
+  }
+}
 </style>
