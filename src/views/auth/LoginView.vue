@@ -12,7 +12,7 @@
               <!-- Header -->
               <div class="text-center space-y-4">
                 <div class="mx-auto w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg transform transition-transform duration-300 hover:scale-105">
-                  <img class="h-8 w-8" src="@/assets/logo.svg" alt="Logo" />
+                  <img class="h-8 w-8" src="/public/logo-smart-wallet.svg" alt="Logo" />
                 </div>
                 <h1 class="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
                   Bem-vindo de volta
@@ -132,11 +132,11 @@
               </div>
               <div class="space-y-4">
                 <h2 class="text-3xl lg:text-4xl font-bold text-white leading-tight">
-                  Gerencie seu negócio
+                  Gerencie a carteira de seus clientes
                   <span class="block text-indigo-200">com inteligência</span>
                 </h2>
                 <p class="text-xl text-indigo-100 leading-relaxed max-w-md mx-auto">
-                  A plataforma completa para transformar sua gestão de estoque em uma vantagem competitiva.
+                  A plataforma completa para transformar sua gestão de carteiras em uma vantagem competitiva.
                 </p>
               </div>
               
@@ -148,7 +148,7 @@
                 </div>
                 <div class="flex items-center space-x-3 text-indigo-100">
                   <div class="w-2 h-2 bg-indigo-300 rounded-full"></div>
-                  <span class="text-sm">Relatórios inteligentes</span>
+                  <span class="text-sm">Pesquisa em tempo real dos ativos</span>
                 </div>
                 <div class="flex items-center space-x-3 text-indigo-100">
                   <div class="w-2 h-2 bg-indigo-300 rounded-full"></div>
@@ -162,7 +162,7 @@
 
       <!-- Footer -->
       <div class="text-center mt-8 text-gray-500 text-sm">
-        © 2024 Stock Manager. Todos os direitos reservados.
+        © 2024 Smart Wallet. Todos os direitos reservados.
       </div>
     </div>
   </div>

@@ -15,7 +15,7 @@ const props = defineProps({
   ></v-alert>
 </template>
 
-<style scoped lang="scss">
+<style>
 .alert {
   transform: translateY(10px);
   animation: moveleft 0.15s linear forwards;

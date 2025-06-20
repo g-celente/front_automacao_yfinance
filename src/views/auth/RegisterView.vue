@@ -169,7 +169,7 @@
                   <span class="block text-emerald-200">hoje mesmo</span>
                 </h2>
                 <p class="text-xl text-emerald-100 leading-relaxed max-w-md mx-auto">
-                  Junte-se a milhares de empresas que já transformaram sua gestão de estoque.
+                  Junte-se a milhares de assessores que já transformaram sua gestão de carteiras.
                 </p>
               </div>
               
@@ -200,7 +200,7 @@
                 <p class="text-emerald-200 text-sm mb-4">Já confiado por</p>
                 <div class="flex justify-center items-center space-x-6 text-emerald-300">
                   <span class="text-2xl font-bold">500+</span>
-                  <span class="text-sm">empresas</span>
+                  <span class="text-sm">assessores</span>
                 </div>
               </div>
             </div>
@@ -213,6 +213,7 @@
         © 2024 Stock Manager. Todos os direitos reservados.
       </div>
     </div>
+    <BaseAlertError v-if="error" :message="textError" />
   </div>
 </template>
 
@@ -297,24 +298,26 @@ import { useVuelidate } from '@vuelidate/core';
 import { required, email, minLength, sameAs } from '@vuelidate/validators';
 import { useAuthStore } from '@/stores/auth/authStore';
 import { useToast } from 'primevue/usetoast';
+import BaseAlertError from '@/components/alert/BaseAlertError.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
 const toast = useToast();
 const loading = ref(false);
+const error = ref(null);
+const textError = ref('');
 
-const form = reactive({
+const form = ref({
   name: '',
   email: '',
   password: '',
-  confirmPassword: ''
 });
 
 const rules = {
   name: { required },
   email: { required, email },
   password: { required, minLength: minLength(8) },
-  confirmPassword: { required, sameAs: sameAs(form.password) }
+  confirmPassword: { required }
 };
 
 const v$ = useVuelidate(rules, form);
@@ -329,19 +332,19 @@ async function handleSubmit() {
   }
 
   try {
-    await authStore.register({
-      name: form.name,
-      email: form.email,
-      password: form.password,
-      role: 'OPERATOR'
-    });
-    toast.add({
-      severity: 'success',
-      summary: 'Sucesso',
-      detail: 'Cadastro realizado com sucesso!',
-      life: 3000
-    });
-    router.push('/');
+    const response = await authStore.registerUser(form.value);
+
+    if (response.success == true) {
+      router.push('/');
+    }
+
+    error.value = true
+    textError.value = response.message || 'Cadastro realizado com sucesso!';
+    setTimeout(() => {
+      error.value = false;
+      textError.value = '';
+    }, 3000);
+
   } catch (error) {
     toast.add({
       severity: 'error',

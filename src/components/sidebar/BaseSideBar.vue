@@ -9,7 +9,7 @@
     <div class="flex items-center justify-between p-4 h-16 border-b border-gray-100 bg-white">
       <router-link to="/" class="flex items-center">
         <span v-show="!props.isCollapsed" class="ml-3 text-lg font-bold transition-opacity duration-200 text-black">
-          Stock Manager
+          Smart Wallet
         </span>
       </router-link>
       <Button 
@@ -78,8 +78,8 @@
             <span class="text-white text-sm font-medium">A</span>
           </div>
           <div class="ml-3 min-w-0 flex-1">
-            <p class="text-sm font-medium text-gray-900 truncate">Admin User</p>
-            <p class="text-xs text-gray-500 truncate">admin@stockmanager.com</p>
+            <p class="text-sm font-medium text-gray-900 truncate">{{ userData.name }}</p>
+            <p class="text-xs text-gray-500 truncate">{{ userData.email }}</p>
           </div>
         </div>
       </div>
@@ -107,6 +107,10 @@
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth/authStore';
+import { adminStore } from '@/stores/admin/adminStore';
+import { ref, onMounted } from 'vue';
+
+const storeAdmin = adminStore();
 
 const props = defineProps({
   isMobileOpen: {
@@ -131,6 +135,11 @@ const isAdmin = computed(() => localStorage.getItem('user-role') === 'admin');
 const toggleCollapse = () => {
   emit('update:isCollapsed', !props.isCollapsed);
 };
+
+const userData = ref({
+  name: '',
+  email: '',
+})
 
 const menuItems = [
   {
@@ -160,6 +169,22 @@ const handleLogout = async () => {
 
   router.push({path: '/'});
 };
+
+const initFunction = async () => {
+
+  const response = await storeAdmin.getUserById();
+
+  if (response.success == true) {
+    userData.value.name = response.user.name;
+    userData.value.email = response.user.email;
+  } else {
+    console.error('Erro ao buscar dados do usuário:', response.message);
+  }
+}
+
+onMounted(async () => {
+  await initFunction();
+});
 </script>
 
 <style>
