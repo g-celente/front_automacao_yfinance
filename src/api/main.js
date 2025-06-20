@@ -1,6 +1,7 @@
 import axios from "axios";
 import AuthService from "./services/auth";
 import AssetService from "./services/asset";
+import ClientService from "./services/client";
 
 const baseURL ="http://127.0.0.1:5000/api"; // Use your actual API base URL here
 
@@ -54,7 +55,7 @@ httpClient.interceptors.response.use(
           });
         } catch (err) {
           localStorage.removeItem("token-auth");
-          window.location.href = "/login"; // Redireciona para a página de login
+          window.location.href = "/"; // Redireciona para a página de login
           return Promise.reject(err);
         }
       }
@@ -73,5 +74,6 @@ httpClient.interceptors.response.use(
 
 export default {
   auth: AuthService(httpClient),
-  asset: AssetService(httpClient)
+  asset: AssetService(httpClient),
+  client: ClientService(httpClient),
 };
