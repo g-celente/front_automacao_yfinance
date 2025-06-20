@@ -5,4 +5,13 @@ export default (httpClient) => ({
     createUser: (data) => {
         return httpClient.post('/clients', data);
     },
+        updateUser: (userId, data) => {
+        return httpClient.put(`/clients/${userId}`, data);
+    },
+    deleteClient: (clientId) => {
+        return httpClient.delete(`/clients/${clientId}`);
+    },
+    getUserById: (clientId) => {
+        return httpClient.get(`/clients/${clientId}`);
+    }
 })

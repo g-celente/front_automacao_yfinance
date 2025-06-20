@@ -10,6 +10,7 @@
       <div class="flex items-center gap-3">
         <Button icon="pi pi-refresh" text rounded
           class="text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 transition-all duration-200"
+          @click="initFunction"
           aria-label="Atualizar" />
         <Button label="Novo Usuário" icon="pi pi-plus" @click="showDialog"
           class="bg-indigo-600 hover:bg-indigo-700 border-indigo-600 hover:border-indigo-700 px-6 py-2.5 text-sm font-medium shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105" />
@@ -36,7 +37,7 @@
           </div>
           <div class="ml-4">
             <p class="text-sm font-medium text-gray-600">Usuários Ativos</p>
-            <p class="text-2xl font-bold text-gray-900">{{users.filter(u => u.status === 'active').length}}</p>
+            <p class="text-2xl font-bold text-gray-900">{{users.filter(u => u.status === 'Ativo').length}}</p>
           </div>
         </div>
       </div>
@@ -104,6 +105,13 @@
             </div>
           </template>
         </Column>
+        <Column field="telefone" header="Telefone" sortable style="min-width: 140px">
+          <template #body="slotProps">
+            <div class="font-mono text-sm text-gray-600 bg-gray-50 px-3 py-1 rounded-md">
+              {{ slotProps.data.telefone }}
+            </div>
+          </template>
+        </Column>
 
         <!-- CPF -->
         <Column field="cpf" header="CPF" sortable style="min-width: 140px">
@@ -120,13 +128,13 @@
             <span :class="[
               'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold transition-all duration-200 transform hover:scale-105',
               {
-                'bg-green-100 text-green-800 border border-green-200': slotProps.data.status === 'active',
+                'bg-green-100 text-green-800 border border-green-200': slotProps.data.status === 'Ativo',
                 'bg-red-100 text-red-800 border border-red-200': slotProps.data.status === 'Inativo',
                 'bg-yellow-100 text-yellow-800 border border-yellow-200': slotProps.data.status === 'Pendente'
               }
             ]">
               <span class="w-2 h-2 rounded-full mr-2" :class="{
-                'bg-green-500': slotProps.data.status === 'active',
+                'bg-green-500': slotProps.data.status === 'Ativo',
                 'bg-red-500': slotProps.data.status === 'Inativo',
                 'bg-yellow-500': slotProps.data.status === 'Pendente'
               }"></span>
@@ -144,13 +152,10 @@
             <div class="flex items-center justify-center gap-2">
               <Button icon="pi pi-pencil" text rounded size="small"
                 class="text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 transition-all duration-200 transform hover:scale-110"
-                v-tooltip="'Editar usuário'" @click="editUser(slotProps.data)" />
-              <Button icon="pi pi-eye" text rounded size="small"
-                class="text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 transform hover:scale-110"
-                v-tooltip="'Visualizar usuário'" @click="viewUser(slotProps.data)" />
+                v-tooltip="'Editar usuário'" @click="editModal(slotProps.data.id)" />
               <Button icon="pi pi-trash" text rounded size="small"
                 class="text-gray-500 hover:text-red-600 hover:bg-red-50 transition-all duration-200 transform hover:scale-110"
-                v-tooltip="'Excluir usuário'" @click="deleteUser(slotProps.data)" />
+                v-tooltip="'Excluir usuário'" @click="deleteClient(slotProps.data.id)" />
             </div>
           </template>
         </Column>
@@ -166,7 +171,7 @@
             <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">
               Nome Completo *
             </label>
-            <InputText id="name" v-model="newUser.name" required autofocus
+            <InputText id="name" v-model="newUser.nome" required autofocus
               class="w-full p-3 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-indigo-500"
               placeholder="Digite o nome completo" />
           </div>
@@ -177,6 +182,14 @@
             <InputText id="email" v-model="newUser.email" required type="email"
               class="w-full p-3 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-indigo-500"
               placeholder="usuario@exemplo.com" />
+          </div>
+          <div class="field">
+            <label for="telefone" class="block text-sm font-semibold text-gray-700 mb-2">
+              Telefone *
+            </label>
+            <InputText id="telefone" v-model="newUser.telefone" required
+              class="w-full p-3 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-indigo-500"
+              placeholder="(41) 9 9649-1619" />
           </div>
           <div class="field">
             <label for="cpf" class="block text-sm font-semibold text-gray-700 mb-2">
@@ -197,10 +210,68 @@
         </div>
       </template>
     </Dialog>
+
+    <Dialog v-model:visible="editVisible" modal header="Atualizar Usuário" :style="{ width: '500px' }"
+      class="p-fluid modern-dialog">
+      <div class="space-y-6 mt-4">
+        <div class="grid grid-cols-1 gap-4">
+          <div class="field">
+            <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">
+              Nome Completo *
+            </label>
+            <InputText id="name" v-model="editPayload.name" required autofocus
+              class="w-full p-3 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-indigo-500"
+              placeholder="Digite o nome completo" />
+          </div>
+          <div class="field">
+            <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
+              Email *
+            </label>
+            <InputText id="email" v-model="editPayload.email" required type="email"
+              class="w-full p-3 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-indigo-500"
+              placeholder="usuario@exemplo.com" />
+          </div>
+          <div class="field">
+            <label for="telefone" class="block text-sm font-semibold text-gray-700 mb-2">
+              Telefone *
+            </label>
+            <InputText id="telefone" v-model="editPayload.telefone" required
+              class="w-full p-3 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-indigo-500"
+              placeholder="(41) 9 9649-1619" />
+          </div>
+          <div class="field">
+            <label for="cpf" class="block text-sm font-semibold text-gray-700 mb-2">
+              CPF *
+            </label>
+            <InputText id="cpf" v-model="editPayload.cpf" required
+              class="w-full p-3 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-indigo-500"
+              placeholder="000.000.000-00" />
+          </div>
+          <div class="field">
+            <label for="status" class="block text-sm font-semibold text-gray-700 mb-2">
+              Status do Cliente *
+            </label>
+            <InputText id="cpf" v-model="editPayload.status" required
+              class="w-full p-3 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-indigo-500"
+              placeholder="000.000.000-00" />
+          </div>
+        </div>
+      </div>
+      <template #footer>
+        <div class="flex justify-end gap-3 pt-4">
+          <Button label="Salvar Alterações" icon="pi pi-check" @click="updateUser"
+            class="bg-indigo-600 hover:bg-indigo-700 border-indigo-600 hover:border-indigo-700 px-6 py-2 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105" />
+        </div>
+      </template>
+    </Dialog>
+    <BaseAlertError v-if="error" :text="textError" />
+    <BaseAlertSuccess v-if="success" :text="textSuccess" />
   </div>
   <div v-else class="loading">
     <BaseLoading class="loading-icon" />
   </div>
+
+
 </template>
 
 <script setup>
@@ -212,23 +283,42 @@ import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import Dropdown from 'primevue/dropdown';
 import BaseLoading from '@/components/loading/BaseLoading.vue';
+import BaseAlertError from '@/components/alert/BaseAlertError.vue';
+import BaseAlertSuccess from '@/components/alert/BaseAlertSuccess.vue';
 
 //Importação de stores
 import { clientStore } from '@/stores/clients/clientStore';
+
 const clientAdmStore = clientStore();
 
 const searchQuery = ref('');
 const statusFilter = ref('');
 const visible = ref(false);
+const editVisible = ref(false);
 const loading = ref(false);
 
-const users = ref([]);
+//Importação de Erros
+const error = ref(false);
+const success = ref(false);
+const textError = ref(null);
+const textSuccess = ref(null);
 
-const newUser = ref({
+const users = ref([]);
+const client = ref(null);
+const editPayload = ref({
+  id: null,
   name: '',
   email: '',
   cpf: '',
-  status: 'Pendente'
+  telefone: '',
+  status: ''
+});
+
+const newUser = ref({
+  nome: '',
+  email: '',
+  cpf: '',
+  telefone: '',
 });
 
 const getUsers = async () => {
@@ -276,31 +366,102 @@ const showDialog = () => {
   visible.value = true;
 };
 
-const hideDialog = () => {
-  visible.value = false;
-  newUser.value = {
-    name: '',
-    email: '',
-    cpf: '',
-    status: 'Pendente'
-  };
+const getClientById = (userId) => {
+  
+  const response = clientAdmStore.getClientById(userId);
+  if (response.success == true) {
+    user.value = response.data;
+  } else {
+    error.value = true;
+    textError.value = response.message || 'Erro ao buscar usuário';
+    setTimeout(() => {
+      error.value = false;
+    }, 3000);
+  }
+
 };
 
-const createUser = () => {
-  // Lógica para criar usuário
-  hideDialog();
+const createUser = async () => {
+
+  const response = await clientAdmStore.createClient(newUser.value);
+
+  if (response.success == true) {
+    visible.value = false;
+    loading.value = true;
+    await getUsers()
+    loading.value = false;
+    success.value = true;
+    textSuccess.value = response.message || 'Usuário criado com sucesso';
+    setTimeout(() => {
+      success.value = false;
+    }, 3000);
+  }
+
+  error.value = true;
+  textError.value = response.message || 'Erro ao criar usuário';
+  setTimeout(() => {
+    error.value = false;
+  }, 3000);
 };
 
-const editUser = (user) => {
-  console.log('Editar usuário:', user);
+const editModal = (userId) => {
+  const user = users.value.find(u => u.id === userId);
+  if (user) {
+    editPayload.value = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      telefone: user.telefone,
+      cpf: user.cpf,
+      status: user.status
+    };
+    editVisible.value = true;
+  } else {
+    error.value = true;
+    textError.value = "Usuário não encontrado para edição.";
+    setTimeout(() => error.value = false, 3000);
+  }
 };
 
-const viewUser = (user) => {
-  console.log('Visualizar usuário:', user);
+const updateUser = async () => {
+  const response = await clientAdmStore.updateClient(editPayload.value.id, editPayload.value); // implementar na store
+
+  if (response.success) {
+    editVisible.value = false;
+    loading.value = true;
+    await getUsers();
+    loading.value = false;
+    success.value = true;
+    textSuccess.value = response.message || 'Usuário atualizado com sucesso';
+    setTimeout(() => success.value = false, 3000);
+  } else {
+    error.value = true;
+    textError.value = response.message || 'Erro ao atualizar usuário';
+    setTimeout(() => error.value = false, 3000);
+  }
 };
 
-const deleteUser = (user) => {
-  console.log('Excluir usuário:', user);
+
+const deleteClient = async (userId) => {
+
+  const response = await clientAdmStore.deleteClient(userId);
+
+  if (response.success == true) {
+    loading.value = true;
+    await getUsers();
+    loading.value = false;
+    success.value = true;
+    textSuccess.value = response.message || 'Usuário excluído com sucesso';
+    setTimeout(() => {
+      success.value = false;
+    }, 3000);
+  }
+
+  error.value = true;
+  textError.value = response.message || 'Erro ao excluir usuário';
+  setTimeout(() => {
+    error.value = false;
+  }, 3000);
 };
 
 const clearFilters = () => {

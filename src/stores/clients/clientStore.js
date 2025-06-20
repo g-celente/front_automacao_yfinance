@@ -16,15 +16,48 @@ export const clientStore = defineStore("client", () => {
     async function createClient(clientData) {
         try {
             const response = await api.client.createUser(clientData);
-            return response.data.client;
+            return response.data;
         } catch (e) {
             console.error('Erro ao criar cliente:', e);
             throw e;
         }
     }
 
+    async function updateClient(clientId, clientData) {
+        try {
+            const response = await api.client.updateUser(clientId, clientData);
+            return response.data;
+        } catch (e) {
+            console.error('Erro ao atualizar cliente:', e);
+            throw e;
+        }
+    }
+
+    async function deleteClient(clientId) {
+        try {
+            const response = await api.client.deleteClient(clientId);
+            return response.data;
+        } catch (e) {
+            console.error('Erro ao deletar cliente:', e);
+            throw e;
+        }
+    }
+
+    async function getClientById(clientId) {
+        try {
+            const response = await api.client.getUserById(clientId);
+            return response.data.cliente;
+        } catch (e) {
+            console.error('Erro ao buscar cliente por ID:', e);
+            throw e;
+        }
+    }
+
     return {
         getClients,
-        createClient
+        createClient,
+        updateClient,
+        deleteClient,
+        getClientById
     };
 });
