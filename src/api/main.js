@@ -5,7 +5,7 @@ import ClientService from "./services/client";
 import AdminService from "./services/admin";
 import CarteiraService from "./services/carteira"; // Import AdminService if needed
 
-const baseURL ="http://127.0.0.1:5000/api"; // Use your actual API base URL here
+const baseURL ="https://api-automacao-yfinance.onrender.com/api"; // Use your actual API base URL here
 
 const httpClient = axios.create({ baseURL });
 
