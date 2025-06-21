@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6">
+  <div class="space-y-6">
     <!-- Loading State -->
     <div v-if="loading" class="flex items-center justify-center min-h-screen">
       <div class="text-center">
@@ -9,21 +9,21 @@
     </div>
 
     <!-- Main Content -->
-    <div v-else-if="carteiraData" class="max-w-7xl mx-auto">
+    <div v-else-if="carteiraData">
       <!-- Header -->
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
         <div>
           <button 
             @click="$router.go(-1)"
-            class="inline-flex items-center text-sm text-gray-500 hover:text-indigo-600 mb-2 transition-colors duration-200"
+            class="inline-flex items-center text-sm text-gray-500 hover:text-indigo-600 mb-3 transition-colors duration-200"
           >
             <i class="pi pi-arrow-left mr-2"></i>
             Voltar para Carteiras
           </button>
-          <h1 class="text-3xl font-bold text-gray-900 mb-2">
+          <h1 class="text-2xl font-bold text-gray-900 mb-1">
             Dashboard da Carteira #{{ $route.params.id }}
           </h1>
-          <p class="text-gray-600">Análise completa de performance e composição</p>
+          <p class="text-gray-500">Análise completa de performance e composição</p>
         </div>
         
         <!-- Action Buttons -->
@@ -32,19 +32,17 @@
             icon="pi pi-plus"
             label="Adicionar Ativo"
             @click="showAddAssetDialog"
-            class="bg-indigo-600 hover:bg-indigo-700 border-indigo-600 hover:border-indigo-700 px-4 py-2 text-sm font-medium shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+            class="px-4 py-2 text-sm font-medium transition-all duration-200"
           />
           <Button
             icon="pi pi-download"
             label="Exportar"
             @click="exportData"
             outlined
-            class="border-gray-300 text-gray-700 hover:bg-gray-50 px-4 py-2 text-sm font-medium transition-all duration-200"
+            class="px-4 py-2 text-sm font-medium transition-all duration-200"
           />
         </div>
-      </div>
-
-      <!-- Estado Vazio -->
+      </div>      <!-- Estado Vazio -->
       <div v-if="!hasAtivos" class="text-center py-16">
         <div class="max-w-md mx-auto">
           <div class="mb-6">
@@ -56,106 +54,197 @@
             icon="pi pi-plus"
             label="Adicionar Primeiro Ativo"
             @click="showAddAssetDialog"
-            class="bg-indigo-600 hover:bg-indigo-700 border-indigo-600 hover:border-indigo-700 px-6 py-3 font-medium shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+            class="px-6 py-3 font-medium transition-all duration-200"
           />
         </div>
       </div>
 
       <!-- Dashboard Content -->
-      <div v-else class="space-y-8">
-        <!-- Cards de Resumo -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+      <div v-else class="space-y-6">
+        <!-- Cards de Métricas -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           <!-- Total de Ativos -->
-          <div class="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-            <div class="flex items-center justify-between mb-4">
-              <div class="p-3 bg-blue-100 rounded-lg">
-                <i class="pi pi-chart-pie text-blue-600 text-xl"></i>
+          <div class="p-6 bg-white rounded-xl border border-gray-100 hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02]">
+            <div class="flex justify-between items-start">
+              <div class="space-y-2">
+                <p class="text-sm font-medium text-gray-500">Total de Ativos</p>
+                <h3 class="text-2xl font-bold text-gray-900">{{ carteiraData.ativos_ordenados.length }}</h3>
+                <div class="flex items-center space-x-1">
+                  <i class="pi pi-arrow-up text-emerald-500"></i>
+                  <span class="text-sm font-medium text-emerald-600">
+                    {{ carteiraData.ativos_ordenados.length }}
+                  </span>
+                </div>
+                <p class="text-sm text-gray-500">Diversificação</p>
               </div>
-              <span class="text-xs text-green-600 font-medium">+{{ carteiraData.ativos_ordenados.length }}</span>
+              <div class="w-12 h-12 rounded-xl flex items-center justify-center bg-blue-100">
+                <i class="pi pi-chart-pie text-xl text-blue-600"></i>
+              </div>
             </div>
-            <h3 class="text-lg font-semibold text-gray-700">Total de Ativos</h3>
-            <p class="text-3xl font-bold text-gray-900">{{ carteiraData.ativos_ordenados.length }}</p>
           </div>
 
           <!-- Retorno Esperado -->
-          <div class="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-            <div class="flex items-center justify-between mb-4">
-              <div class="p-3 bg-green-100 rounded-lg">
-                <i class="pi pi-trending-up text-green-600 text-xl"></i>
+          <div class="p-6 bg-white rounded-xl border border-gray-100 hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02]">
+            <div class="flex justify-between items-start">
+              <div class="space-y-2">
+                <p class="text-sm font-medium text-gray-500">Retorno Esperado</p>
+                <h3 :class="retornoTextClass" class="text-2xl font-bold">
+                  {{ formatPercentage(carteiraData.indicadores_carteira.retorno_esperado) }}
+                </h3>
+                <div class="flex items-center space-x-1">
+                  <i :class="carteiraData.indicadores_carteira.retorno_esperado >= 0 ? 'pi pi-arrow-up text-emerald-500' : 'pi pi-arrow-down text-red-500'"></i>
+                  <span :class="retornoClass" class="text-sm font-medium">
+                    {{ Math.abs(carteiraData.indicadores_carteira.retorno_esperado * 100).toFixed(1) }}%
+                  </span>
+                </div>
+                <p class="text-sm text-gray-500">Performance</p>
               </div>
-              <span :class="retornoClass" class="text-xs font-medium">
-                {{ formatPercentage(carteiraData.indicadores_carteira.retorno_esperado) }}
-              </span>
+              <div class="w-12 h-12 rounded-xl flex items-center justify-center bg-emerald-100">
+                <i class="pi pi-trending-up text-xl text-emerald-600"></i>
+              </div>
             </div>
-            <h3 class="text-lg font-semibold text-gray-700">Retorno Esperado</h3>
-            <p :class="retornoTextClass" class="text-3xl font-bold">
-              {{ formatPercentage(carteiraData.indicadores_carteira.retorno_esperado) }}
-            </p>
           </div>
 
           <!-- Desvio Padrão -->
-          <div class="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-            <div class="flex items-center justify-between mb-4">
-              <div class="p-3 bg-orange-100 rounded-lg">
-                <i class="pi pi-exclamation-triangle text-orange-600 text-xl"></i>
+          <div class="p-6 bg-white rounded-xl border border-gray-100 hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02]">
+            <div class="flex justify-between items-start">
+              <div class="space-y-2">
+                <p class="text-sm font-medium text-gray-500">Risco (Desvio Padrão)</p>
+                <h3 class="text-2xl font-bold text-gray-900">
+                  {{ formatPercentage(carteiraData.indicadores_carteira.desvio_padrao) }}
+                </h3>
+                <div class="flex items-center space-x-1">
+                  <i class="pi pi-exclamation-triangle text-orange-500"></i>
+                  <span class="text-sm font-medium text-orange-600">Volatilidade</span>
+                </div>
+                <p class="text-sm text-gray-500">Risco calculado</p>
               </div>
-              <span class="text-xs text-orange-600 font-medium">Risco</span>
+              <div class="w-12 h-12 rounded-xl flex items-center justify-center bg-orange-100">
+                <i class="pi pi-exclamation-triangle text-xl text-orange-600"></i>
+              </div>
             </div>
-            <h3 class="text-lg font-semibold text-gray-700">Desvio Padrão</h3>
-            <p class="text-3xl font-bold text-gray-900">
-              {{ formatPercentage(carteiraData.indicadores_carteira.desvio_padrao) }}
-            </p>
           </div>
 
           <!-- Índice Sharpe -->
-          <div class="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-            <div class="flex items-center justify-between mb-4">
-              <div class="p-3 bg-purple-100 rounded-lg">
-                <i class="pi pi-chart-bar text-purple-600 text-xl"></i>
+          <div class="p-6 bg-white rounded-xl border border-gray-100 hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02]">
+            <div class="flex justify-between items-start">
+              <div class="space-y-2">
+                <p class="text-sm font-medium text-gray-500">Índice Sharpe</p>
+                <h3 class="text-2xl font-bold text-gray-900">
+                  {{ formatNumber(carteiraData.indicadores_carteira.indice_sharpe) }}
+                </h3>
+                <div class="flex items-center space-x-1">
+                  <i :class="carteiraData.indicadores_carteira.indice_sharpe > 1 ? 'pi pi-arrow-up text-emerald-500' : 'pi pi-arrow-down text-red-500'"></i>
+                  <span :class="sharpeClass" class="text-sm font-medium">
+                    {{ getSharpeRating(carteiraData.indicadores_carteira.indice_sharpe) }}
+                  </span>
+                </div>
+                <p class="text-sm text-gray-500">Relação Risco/Ret.</p>
               </div>
-              <span :class="sharpeClass" class="text-xs font-medium">
-                {{ getSharpeRating(carteiraData.indicadores_carteira.indice_sharpe) }}
-              </span>
+              <div class="w-12 h-12 rounded-xl flex items-center justify-center bg-violet-100">
+                <i class="pi pi-chart-bar text-xl text-violet-600"></i>
+              </div>
             </div>
-            <h3 class="text-lg font-semibold text-gray-700">Índice Sharpe</h3>
-            <p class="text-3xl font-bold text-gray-900">
-              {{ formatNumber(carteiraData.indicadores_carteira.indice_sharpe) }}
-            </p>
           </div>
 
           <!-- Índice de Desempenho -->
-          <div class="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-            <div class="flex items-center justify-between mb-4">
-              <div class="p-3 bg-indigo-100 rounded-lg">
-                <i class="pi pi-calculator text-indigo-600 text-xl"></i>
+          <div class="p-6 bg-white rounded-xl border border-gray-100 hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02]">
+            <div class="flex justify-between items-start">
+              <div class="space-y-2">
+                <p class="text-sm font-medium text-gray-500">Performance Index</p>
+                <h3 class="text-2xl font-bold text-gray-900">
+                  {{ formatPercentage(carteiraData.indicadores_carteira.indice_desempenho) }}
+                </h3>
+                <div class="flex items-center space-x-1">
+                  <i class="pi pi-calculator text-indigo-500"></i>
+                  <span class="text-sm font-medium text-indigo-600">Índice geral</span>
+                </div>
+                <p class="text-sm text-gray-500">Desempenho</p>
               </div>
-              <span class="text-xs text-indigo-600 font-medium">Performance</span>
+              <div class="w-12 h-12 rounded-xl flex items-center justify-center bg-indigo-100">
+                <i class="pi pi-calculator text-xl text-indigo-600"></i>
+              </div>
             </div>
-            <h3 class="text-lg font-semibold text-gray-700">Índice Desempenho</h3>
-            <p class="text-3xl font-bold text-gray-900">
-              {{ formatPercentage(carteiraData.indicadores_carteira.indice_desempenho) }}
-            </p>
-          </div>
-        </div>
+          </div>        </div>
 
-        <!-- Gráficos -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <!-- Gráfico de Retorno vs Risco -->
-          <div class="bg-white rounded-xl p-6 shadow-lg">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">Análise de Retorno vs Risco</h3>
-            <Chart type="scatter" :data="scatterChartData" :options="scatterChartOptions" class="h-80" />
+        <!-- Gráficos e Análises -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Gráfico Principal - Retorno vs Risco -->
+          <div class="lg:col-span-2 bg-white p-6 rounded-xl border border-gray-100">
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+              <h3 class="text-lg font-semibold text-gray-900">
+                Análise de Retorno vs Risco
+              </h3>
+              <Dropdown
+                v-model="selectedChartType"
+                :options="chartTypes"
+                optionLabel="label"
+                class="w-40"
+              />
+            </div>
+            <Chart 
+              v-if="selectedChartType.value === 'scatter'"
+              type="scatter" 
+              :data="scatterChartData" 
+              :options="scatterChartOptions" 
+              class="h-[300px]" 
+            />
+            <Chart 
+              v-else
+              type="radar" 
+              :data="radarChartData" 
+              :options="radarChartOptions" 
+              class="h-[300px]" 
+            />
           </div>
 
-          <!-- Gráfico de Comparação de Indicadores -->
-          <div class="bg-white rounded-xl p-6 shadow-lg">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">Comparação de Indicadores</h3>
-            <Chart type="radar" :data="radarChartData" :options="radarChartOptions" class="h-80" />
+          <!-- Lista de Ativos -->
+          <div class="bg-white p-6 rounded-xl border border-gray-100">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+              Top Ativos da Carteira
+            </h3>
+            <div class="space-y-4">
+              <div
+                v-for="(ativo, index) in carteiraData.ativos_ordenados.slice(0, 5)"
+                :key="index"
+                class="flex items-start space-x-4 p-3 hover:bg-gray-50 rounded-lg transition-colors"
+              >
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-blue-100">
+                  <i class="pi pi-chart-line text-blue-600"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-gray-900">
+                    {{ ativo.ticker }}
+                  </p>
+                  <p class="text-sm text-gray-500">
+                    Peso: {{ formatPercentage(ativo.peso) }}
+                  </p>
+                  <div class="flex items-center space-x-2 mt-1">
+                    <span class="text-xs text-gray-400">
+                      Ret: {{ formatPercentage(ativo.retorno_esperado) }}
+                    </span>
+                    <span class="text-xs text-gray-400">
+                      Risk: {{ formatPercentage(ativo.desvio_padrao) }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              <div v-if="carteiraData.ativos_ordenados.length > 5" class="text-center pt-2">
+                <Button
+                  label="Ver Todos os Ativos"
+                  @click="scrollToAssetsTable"
+                  text
+                  class="text-sm text-indigo-600 hover:text-indigo-700"
+                />
+              </div>
+            </div>
           </div>
         </div>
 
         <!-- Heatmap da Matriz de Covariância -->
-        <div class="bg-white rounded-xl p-6 shadow-lg">
-          <h3 class="text-lg font-semibold text-gray-800 mb-6">Matriz de Covariância</h3>
+        <div class="bg-white rounded-xl p-6 border border-gray-100">
+          <h3 class="text-lg font-semibold text-gray-900 mb-6">Matriz de Covariância</h3>
           <div class="overflow-x-auto">
             <div class="inline-block min-w-full">
               <div class="grid gap-1" :style="{ gridTemplateColumns: `repeat(${carteiraData.ativos_ordenados.length + 1}, minmax(100px, 1fr))` }">
@@ -186,13 +275,11 @@
               </div>
             </div>
           </div>
-        </div>
-
-        <!-- Tabela de Ativos Detalhada -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-          <div class="p-6 border-b border-gray-200">
-            <h3 class="text-lg font-semibold text-gray-800">Composição da Carteira</h3>
-            <p class="text-sm text-gray-600 mt-1">Análise detalhada de cada ativo</p>
+        </div>        <!-- Tabela de Ativos Detalhada -->
+        <div class="bg-white rounded-xl border border-gray-100 overflow-hidden" ref="assetsTable">
+          <div class="p-6 border-b border-gray-100">
+            <h3 class="text-lg font-semibold text-gray-900">Composição da Carteira</h3>
+            <p class="text-sm text-gray-500 mt-1">Análise detalhada de cada ativo</p>
           </div>
           
           <DataTable 
@@ -209,10 +296,13 @@
               <template #body="slotProps">
                 <div class="flex items-center">
                   <div 
-                    class="w-10 h-10 rounded-full flex items-center justify-center mr-3 text-white font-bold text-sm"
-                    :class="slotProps.data.ticker === 'BOVA11.SA' ? 'bg-gradient-to-r from-yellow-400 to-yellow-600' : 'bg-gradient-to-r from-blue-500 to-blue-600'"
+                    class="w-10 h-10 rounded-xl flex items-center justify-center mr-3 text-white font-bold text-sm"
+                    :class="slotProps.data.ticker === 'BOVA11.SA' ? 'bg-yellow-100' : 'bg-blue-100'"
                   >
-                    {{ slotProps.data.ticker.substring(0, 2) }}
+                    <i 
+                      class="pi pi-chart-line" 
+                      :class="slotProps.data.ticker === 'BOVA11.SA' ? 'text-yellow-600' : 'text-blue-600'"
+                    ></i>
                   </div>
                   <div>
                     <div class="font-semibold text-gray-900">
@@ -257,8 +347,9 @@
                   <div class="mt-1">
                     <div class="w-full bg-gray-200 rounded-full h-2">
                       <div 
-                        class="bg-gradient-to-r from-red-400 to-red-600 h-2 rounded-full transition-all duration-500"
-                        :style="{ width: Math.min(slotProps.data.risco * 1000, 100) + '%' }"
+                        class="h-2 rounded-full transition-all duration-500"
+                        :class="slotProps.data.risco > 0.3 ? 'bg-red-400' : slotProps.data.risco > 0.15 ? 'bg-yellow-400' : 'bg-green-400'"
+                        :style="{ width: Math.min(slotProps.data.risco * 300, 100) + '%' }"
                       ></div>
                     </div>
                   </div>
@@ -308,9 +399,7 @@
           </DataTable>
         </div>
       </div>
-    </div>
-
-    <!-- Error State -->
+    </div>    <!-- Error State -->
     <div v-else class="flex flex-col items-center justify-center min-h-screen">
       <div class="text-center">
         <i class="pi pi-exclamation-triangle text-4xl text-red-400 mb-4"></i>
@@ -320,26 +409,22 @@
           label="Tentar Novamente"
           icon="pi pi-refresh"
           @click="loadCarteiraData"
-          class="bg-indigo-600 hover:bg-indigo-700 border-indigo-600 hover:border-indigo-700 px-4 py-2"
+          class="px-4 py-2"
         />
       </div>
-      <div class="flex items-center gap-3 mt-4 sm:mt-4">
-          <Button
+      <Button
             icon="pi pi-plus"
             label="Adicionar Ativo"
             @click="showAddAssetDialog"
-            class="bg-indigo-600 hover:bg-indigo-700 border-indigo-600 hover:border-indigo-700 px-4 py-2 text-sm font-medium shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
-          />
-        </div>
-    </div>
-
-    <!-- Modal Adicionar Ativo -->
+            class="px-4 py-2 text-sm font-medium transition-all duration-200 mt-4"
+        />
+    </div>    <!-- Modal Adicionar Ativo -->
     <Dialog
       v-model:visible="addAssetDialogVisible"
       modal
       header="Adicionar Ativo à Carteira"
       :style="{ width: '500px' }"
-      class="p-fluid modern-dialog"
+      class="p-fluid"
     >
       <div class="space-y-6 mt-4">
         <div class="field">
@@ -351,7 +436,7 @@
             v-model="newAsset.ticker"
             required
             autofocus
-            class="w-full p-3 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-indigo-500"
+            class="w-full"
             placeholder="Ex: ITUB4.SA, VALE3.SA"
             @keypress.enter="addAsset"
           />
@@ -398,7 +483,7 @@
             icon="pi pi-times"
             text
             @click="hideAddAssetDialog"
-            class="text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-all duration-200"
+            class="transition-all duration-200"
           />
           <Button
             label="Adicionar Ativo"
@@ -406,7 +491,7 @@
             :loading="addingAsset"
             :disabled="!newAsset.ticker"
             @click="addAsset"
-            class="bg-indigo-600 hover:bg-indigo-700 border-indigo-600 hover:border-indigo-700 px-6 py-2 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+            class="transition-all duration-200"
           />
         </div>
       </template>
@@ -438,6 +523,14 @@ const loading = ref(true);
 const carteiraData = ref(null);
 const addAssetDialogVisible = ref(false);
 const addingAsset = ref(false);
+const assetsTable = ref(null);
+
+// Chart type selector
+const selectedChartType = ref({ label: 'Dispersão', value: 'scatter' });
+const chartTypes = [
+  { label: 'Dispersão', value: 'scatter' },
+  { label: 'Radar', value: 'radar' }
+];
 
 const newAsset = ref({
   ticker: '',
@@ -682,6 +775,13 @@ const exportData = () => {
     detail: 'Funcionalidade de exportação em desenvolvimento',
     life: 3000
   });
+};
+
+// Função para scrollar até a tabela de ativos
+const scrollToAssetsTable = () => {
+  if (assetsTable.value) {
+    assetsTable.value.scrollIntoView({ behavior: 'smooth' });
+  }
 };
 
 // Utility Functions
