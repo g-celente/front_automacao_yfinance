@@ -37,10 +37,11 @@
           <Button
             icon="pi pi-download"
             label="Exportar"
-            @click="exportData"
+            @click="exportData($route.params.id)"
+            :loading="exportLoading"
             outlined
             class="px-4 py-2 text-sm font-medium transition-all duration-200"
-          />
+            />
         </div>
       </div>      <!-- Estado Vazio -->
       <div v-if="!hasAtivos" class="text-center py-16">
@@ -512,6 +513,7 @@ import InputText from 'primevue/inputtext';
 import Dropdown from 'primevue/dropdown';
 import { carteiraStore } from '@/stores/carteiras/carteiraStore';
 import { assetStore } from '@/stores/asset/assetStore';
+import carteira from '@/api/services/carteira';
 
 const route = useRoute();
 const router = useRouter();
@@ -519,6 +521,7 @@ const toast = useToast();
 const carteiraStoreInstance = carteiraStore();
 const assetStoreInstance = assetStore();
 
+const exportLoading = ref(false);
 const loading = ref(true);
 const carteiraData = ref(null);
 const addAssetDialogVisible = ref(false);
@@ -768,13 +771,43 @@ const addAsset = async () => {
   }
 };
 
-const exportData = () => {
-  toast.add({
-    severity: 'info',
-    summary: 'Em breve',
-    detail: 'Funcionalidade de exportação em desenvolvimento',
-    life: 3000
-  });
+const exportData = async (carteiraId) => {
+  // Adiciona estado de loading para o botão de exportar
+  const exportLoading = ref(false);
+  exportLoading.value = true;
+  
+  try {
+    // Mostra toast de início da exportação
+    toast.add({
+      severity: 'info',
+      summary: 'Exportando...',
+      detail: 'Preparando arquivo para download...',
+      life: 2000
+    });
+    
+    const result = await carteiraStoreInstance.exportarCarteira(carteiraId);
+    
+    // Sucesso
+    toast.add({
+      severity: 'success',
+      summary: 'Exportação Concluída',
+      detail: `Arquivo ${result.filename} baixado com sucesso!`,
+      life: 4000
+    });
+    
+  } catch (error) {
+    console.error('Erro ao exportar dados:', error);
+    
+    // Mostra erro específico
+    toast.add({
+      severity: 'error',
+      summary: 'Erro na Exportação',
+      detail: error.message || 'Não foi possível exportar os dados',
+      life: 6000
+    });
+  } finally {
+    exportLoading.value = false;
+  }
 };
 
 // Função para scrollar até a tabela de ativos

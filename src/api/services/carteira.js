@@ -17,4 +17,12 @@ export default (httpClient) => ({
     getIndicadoresCarteira: (walletId) => {
         return httpClient.get(`/wallets/${walletId}/indicadores`);
     },
+    exportarCarteira: (walletId) => {
+        return httpClient.get(`/wallets/${walletId}/export`, {
+            responseType: 'blob',
+            headers: {
+                'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            }
+        });
+    },
 });
