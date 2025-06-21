@@ -51,6 +51,14 @@ export const carteiraStore = defineStore("carteira", () => {
             console.error('Erro ao buscar carteira por ID:', e);
             throw e;
         }
+    }    async function getIndicadoresCarteira(carteiraId) {
+        try {
+            const response = await api.carteira.getIndicadoresCarteira(carteiraId);
+            return response.data;
+        } catch (e) {
+            console.error('Erro ao buscar indicadores da carteira:', e);
+            throw e;
+        }
     }
 
     return {
@@ -58,6 +66,7 @@ export const carteiraStore = defineStore("carteira", () => {
         createCarteira,
         updateCarteira,
         deleteCarteira,
-        getCarteiraById
+        getCarteiraById,
+        getIndicadoresCarteira
     };
 })

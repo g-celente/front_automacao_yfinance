@@ -25,7 +25,18 @@ export const assetStore = defineStore("asset", () => {
         }
     }
 
+    async function createAsset(assetData) {
+        try {
+            const response = await api.asset.createAsset(assetData);
+            return response.data;
+        } catch (e) {
+            console.error('Erro ao criar ativo:', e);
+            throw e;
+        }
+    }
+
     return {
-        searchAsset
+        searchAsset,
+        createAsset
     };
 });

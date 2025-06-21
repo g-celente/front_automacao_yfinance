@@ -32,11 +32,15 @@ const router = createRouter({
           path: "users",
           name: "AdminUsers",
           component: () => import("../views/admin/UsersView.vue"),
-        },
-        {
+        },        {
           path: "carteiras",
           name: "AdminCarteiras",
           component: () => import("../views/admin/CarteirasView.vue"),
+        },
+        {
+          path: "carteiras/:id/dashboard",
+          name: "CarteiraDashboard",
+          component: () => import("../views/admin/CarteiraDashboard.vue"),
         }
       ],
     },

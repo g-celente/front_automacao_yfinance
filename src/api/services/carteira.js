@@ -11,5 +11,10 @@ export default (httpClient) => ({
     deleteCarteira: (walletId) => {
         return httpClient.delete(`/wallets/${walletId}`);
     },
-
+    getCarteiraById: (walletId) => {
+        return httpClient.get(`/wallets/${walletId}`);
+    },
+    getIndicadoresCarteira: (walletId) => {
+        return httpClient.get(`/wallets/${walletId}/indicadores`);
+    },
 });

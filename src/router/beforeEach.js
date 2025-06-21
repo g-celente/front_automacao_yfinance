@@ -7,7 +7,8 @@ export default async (to) => {
     'admin': [
       'AdminDashboard',
       'AdminUsers',
-      'AdminCarteiras' // Rotas permitidas para user_type_id = 1 (admin)
+      'AdminCarteiras',
+      'CarteiraDashboard' // Rotas permitidas para user_type_id = 1 (admin)
     ], // Rotas permitidas para user_type_id = 1
     'client': [
       'UserDashboard',

@@ -16,6 +16,7 @@ import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
 import Toast from 'primevue/toast'
 import Tag from 'primevue/tag'
+import Chart from 'primevue/chart'
 
 // Styles
 import '@/assets/main.css'
@@ -45,5 +46,6 @@ app.component('Dropdown', Dropdown)
 app.component('InputSwitch', InputSwitch)
 app.component('Toast', Toast)
 app.component('Tag', Tag)
+app.component('Chart', Chart)
 
 app.mount('#app')

@@ -146,9 +146,11 @@
         <Column style="width: 120px">
           <template #header>
             <span class="text-center w-full block">Ações</span>
-          </template>
-          <template #body="slotProps">
+          </template>          <template #body="slotProps">
             <div class="flex items-center justify-center gap-2">
+              <Button icon="pi pi-eye" text rounded size="small"
+                class="text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 transform hover:scale-110"
+                v-tooltip="'Ver dashboard'" @click="viewCarteiraDashboard(slotProps.data.id)" />
               <Button icon="pi pi-pencil" text rounded size="small"
                 class="text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 transition-all duration-200 transform hover:scale-110"
                 v-tooltip="'Editar carteira'" @click="editModal(slotProps.data.id)" />
@@ -256,6 +258,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Dialog from 'primevue/dialog';
@@ -270,6 +273,7 @@ import BaseAlertSuccess from '@/components/alert/BaseAlertSuccess.vue';
 import { carteiraStore } from '@/stores/carteiras/carteiraStore';
 import { clientStore } from '@/stores/clients/clientStore';
 
+const router = useRouter();
 const carteirasStore = carteiraStore();
 const clientsStore = clientStore();
 
@@ -494,6 +498,10 @@ const deleteCarteira = async (carteiraId) => {
 const clearFilters = () => {
   searchQuery.value = '';
   clienteFilter.value = '';
+};
+
+const viewCarteiraDashboard = (carteiraId) => {
+  router.push({ name: 'CarteiraDashboard', params: { id: carteiraId } });
 };
 
 onMounted(async () => {
