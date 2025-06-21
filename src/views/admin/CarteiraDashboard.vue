@@ -610,16 +610,17 @@ const loadCarteiraData = async () => {
   try {
     const carteiraId = route.params.id;
     const response = await carteiraStoreInstance.getIndicadoresCarteira(carteiraId);
+    console.log("response", response.value)
     carteiraData.value = response.indicadores;
-    console.log('Dados da carteira carregados:', carteiraData.value);
   } catch (error) {
     console.error('Erro ao carregar dados da carteira:', error);
     toast.add({
       severity: 'error',
       summary: 'Erro',
-      detail: response?.message || 'Não foi possível carregar os dados da carteira',
+      detail: 'O Bova11.SA não foi encontrado na sua carteira ou não possui dados disponíveis.',
       life: 3000
     });
+    response.value = null;
   } finally {
     loading.value = false;
   }
@@ -666,7 +667,7 @@ const addAsset = async () => {
     toast.add({
       severity: 'error',
       summary: 'Erro',
-      detail: 'Não foi possível adicionar o ativo',
+      detail: response?.message || 'Não foi possível adicionar o ativo',
       life: 3000
     });
   } finally {
