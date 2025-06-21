@@ -154,9 +154,10 @@ const menuItems = [
     requiresAdmin: true
   },
   {
-    label: 'Carteira',
+    label: 'Carteiras',
     icon: 'pi-wallet',
-    to: '/carteira',
+    to: '/admin/carteiras',
+    requiresAdmin: true
   }
 ];
 

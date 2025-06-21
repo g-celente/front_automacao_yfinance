@@ -2,7 +2,8 @@ import axios from "axios";
 import AuthService from "./services/auth";
 import AssetService from "./services/asset";
 import ClientService from "./services/client";
-import AdminService from "./services/admin"; // Import AdminService if needed
+import AdminService from "./services/admin";
+import CarteiraService from "./services/carteira"; // Import AdminService if needed
 
 const baseURL ="https://api-automacao-yfinance.onrender.com/api"; // Use your actual API base URL here
 
@@ -78,4 +79,5 @@ export default {
   asset: AssetService(httpClient),
   client: ClientService(httpClient),
   admin: AdminService(httpClient),
+  carteira: CarteiraService(httpClient)
 };

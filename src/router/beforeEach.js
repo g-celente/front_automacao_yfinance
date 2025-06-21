@@ -6,7 +6,8 @@ export default async (to) => {
   const userRoutes = {
     'admin': [
       'AdminDashboard',
-      'AdminUsers', // Rotas permitidas para user_type_id = 1 (admin)
+      'AdminUsers',
+      'AdminCarteiras' // Rotas permitidas para user_type_id = 1 (admin)
     ], // Rotas permitidas para user_type_id = 1
     'client': [
       'UserDashboard',

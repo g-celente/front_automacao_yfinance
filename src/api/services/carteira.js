@@ -1,0 +1,15 @@
+export default (httpClient) => ({
+    getCarteiras: () => {
+        return httpClient.get('/wallets');
+    },
+    createCarteira: (data) => {
+        return httpClient.post('/wallets', data);
+    },
+    updateCarteira: (walletId, data) => {
+        return httpClient.put(`/wallets/${walletId}`, data);
+    },
+    deleteCarteira: (walletId) => {
+        return httpClient.delete(`/wallets/${walletId}`);
+    },
+
+});

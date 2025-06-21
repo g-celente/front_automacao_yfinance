@@ -33,6 +33,11 @@ const router = createRouter({
           name: "AdminUsers",
           component: () => import("../views/admin/UsersView.vue"),
         },
+        {
+          path: "carteiras",
+          name: "AdminCarteiras",
+          component: () => import("../views/admin/CarteirasView.vue"),
+        }
       ],
     },
     {
