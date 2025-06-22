@@ -57,7 +57,7 @@ httpClient.interceptors.response.use(
           });
         } catch (err) {
           localStorage.removeItem("token-auth");
-          window.location.href = "/"; // Redireciona para a página de login
+          window.location.href = "/login"; // Redireciona para a página de login
           return Promise.reject(err);
         }
       }
