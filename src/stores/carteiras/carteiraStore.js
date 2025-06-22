@@ -1,64 +1,121 @@
 import { defineStore } from "pinia";
+import { useToast } from 'primevue/usetoast';
 import api from "@/api/main.js";
 
 export const carteiraStore = defineStore("carteira", () => {
-    async function getCarteiras() {
+    const toast = useToast();    async function getCarteiras() {
         try {
             const response = await api.carteira.getCarteiras();
             console.log('Carteiras:', response.data);
             return response.data.portfolios;
         } catch (e) {
             console.error('Erro ao buscar carteiras:', e);
+            toast.add({
+                severity: 'error',
+                summary: 'Erro',
+                detail: e.response?.data?.message || e.message || 'Erro ao carregar carteiras',
+                life: 3000
+            });
             throw e;
         }
-    }
-
-    async function createCarteira(carteiraData) {
+    }    async function createCarteira(carteiraData) {
         try {
             const response = await api.carteira.createCarteira(carteiraData);
+            toast.add({
+                severity: 'success',
+                summary: 'Sucesso',
+                detail: response.message || 'Carteira criada com sucesso',
+                life: 3000
+            });
             return response.data;
         } catch (e) {
             console.error('Erro ao criar carteira:', e);
+            toast.add({
+                severity: 'error',
+                summary: 'Erro',
+                detail: e.response?.data?.message || e.message || 'Erro ao criar carteira',
+                life: 3000
+            });
             throw e;
         }
-    }
-
-    async function updateCarteira(carteiraId, carteiraData) {
+    }    async function updateCarteira(carteiraId, carteiraData) {
         try {
             const response = await api.carteira.updateCarteira(carteiraId, carteiraData);
+            toast.add({
+                severity: 'success',
+                summary: 'Sucesso',
+                detail: response.message || 'Carteira atualizada com sucesso',
+                life: 3000
+            });
             return response.data;
         } catch (e) {
             console.error('Erro ao atualizar carteira:', e);
+            toast.add({
+                severity: 'error',
+                summary: 'Erro',
+                detail: e.response?.data?.message || e.message || 'Erro ao atualizar carteira',
+                life: 3000
+            });
             throw e;
         }
-    }
-
-    async function deleteCarteira(carteiraId) {
+    }    async function deleteCarteira(carteiraId) {
         try {
             const response = await api.carteira.deleteCarteira(carteiraId);
+            toast.add({
+                severity: 'success',
+                summary: 'Sucesso',
+                detail: response.message || 'Carteira deletada com sucesso',
+                life: 3000
+            });
             return response.data;
         } catch (e) {
             console.error('Erro ao deletar carteira:', e);
+            toast.add({
+                severity: 'error',
+                summary: 'Erro',
+                detail: e.response?.data?.message || e.message || 'Erro ao deletar carteira',
+                life: 3000
+            });
             throw e;
         }
-    }
-
-    async function getCarteiraById(carteiraId) {
+    }    async function getCarteiraById(carteiraId) {
         try {
             const response = await api.carteira.getCarteiraById(carteiraId);
+            toast.add({
+                severity: 'success',
+                summary: 'Sucesso',
+                detail: response.message || 'Carteira carregada com sucesso',
+                life: 3000
+            });
             return response.data.carteira;
         } catch (e) {
             console.error('Erro ao buscar carteira por ID:', e);
+            toast.add({
+                severity: 'error',
+                summary: 'Erro',
+                detail: e.response?.data?.message || e.message || 'Erro ao carregar carteira',
+                life: 3000
+            });
             throw e;
         }
-    }
-
-    async function getIndicadoresCarteira(carteiraId) {
+    }    async function getIndicadoresCarteira(carteiraId) {
         try {
             const response = await api.carteira.getIndicadoresCarteira(carteiraId);
+            toast.add({
+                severity: 'success',
+                summary: 'Sucesso',
+                detail: response.message || 'Indicadores carregados com sucesso',
+                life: 3000
+            });
             return response.data;
         } catch (e) {
             console.error('Erro ao buscar indicadores da carteira:', e);
+            toast.add({
+                severity: 'error',
+                summary: 'Erro',
+                detail: e.response?.data?.message || e.message || 'Erro ao carregar indicadores',
+                life: 3000
+            });
             throw e;
         }
     }
@@ -108,9 +165,14 @@ export const carteiraStore = defineStore("carteira", () => {
             document.body.removeChild(link);
 
             // Limpa a URL temporária da memória
-            window.URL.revokeObjectURL(url);
+            window.URL.revokeObjectURL(url);            console.log(`Carteira ${carteiraId} exportada com sucesso: ${filename}`);
 
-            console.log(`Carteira ${carteiraId} exportada com sucesso: ${filename}`);
+            toast.add({
+                severity: 'success',
+                summary: 'Sucesso',
+                detail: `Carteira exportada com sucesso! Arquivo: ${filename}`,
+                life: 3000
+            });
 
             return {
                 success: true,
@@ -148,9 +210,15 @@ export const carteiraStore = defineStore("carteira", () => {
                 // Erro de rede/conexão
                 errorMessage = 'Erro de conexão. Verifique sua internet e tente novamente.';
             } else if (error.message) {
-                // Outros erros
-                errorMessage = error.message;
+                // Outros erros                errorMessage = error.message;
             }
+
+            toast.add({
+                severity: 'error',
+                summary: 'Erro',
+                detail: errorMessage,
+                life: 3000
+            });
 
             throw new Error(errorMessage);
         }

@@ -22,6 +22,12 @@
                             Comece Grátis
                         </button>
                     </router-link>
+                    <router-link :to="{ path: '/login' }" custom v-slot="{ navigate }">
+                        <button @click="navigate"
+                            class="w-70 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-2 rounded-lg">
+                            Faça Login
+                        </button>
+                    </router-link>
                 </div>
 
                 <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden">
@@ -39,6 +45,12 @@
                         <button @click="navigate"
                             class="w-50 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-2 rounded-lg">
                             Comece Grátis
+                        </button>
+                    </router-link>
+                    <router-link :to="{ path: '/login' }" custom v-slot="{ navigate }">
+                        <button @click="navigate"
+                            class="w-70 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-2 rounded-lg">
+                            Faça Login
                         </button>
                     </router-link>
                 </div>
