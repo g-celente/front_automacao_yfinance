@@ -138,7 +138,7 @@
                 <p class="text-center text-gray-600 pt-4">
                   Já tem uma conta?
                   <router-link
-                    to="/"
+                    to="/login"
                     class="font-semibold text-emerald-600 hover:text-emerald-500 transition-colors duration-200 hover:underline ml-1"
                   >
                     Fazer login
@@ -335,7 +335,7 @@ async function handleSubmit() {
     const response = await authStore.registerUser(form.value);
 
     if (response.success == true) {
-      router.push('/');
+      router.push('/login');
     }
 
     error.value = true
